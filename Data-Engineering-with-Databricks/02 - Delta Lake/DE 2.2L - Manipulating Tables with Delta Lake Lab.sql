@@ -63,7 +63,13 @@
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+CREATE TABLE beans (
+  name STRING,
+  color STRING,
+  grams FLOAT,
+  delicious BOOLEAN
+
+)
 
 -- COMMAND ----------
 
@@ -107,7 +113,7 @@ INSERT INTO beans VALUES
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+SELECT * FROM beans
 
 -- COMMAND ----------
 
@@ -120,7 +126,7 @@ INSERT INTO beans VALUES
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+INSERT INTO beans VALUES
 ('pinto', 'brown', 1.5, true),
 ('green', 'green', 178.3, true),
 ('beanbag chair', 'white', 40000, false)
@@ -171,7 +177,7 @@ WHERE name = "jelly"
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+UPDATE beans SET grams = 1500 WHERE name = 'pinto'
 
 -- COMMAND ----------
 
@@ -205,7 +211,7 @@ WHERE name = "jelly"
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+DELETE FROM beans WHERE delicious = false
 
 -- COMMAND ----------
 
@@ -223,15 +229,13 @@ WHERE name = "jelly"
 
 -- COMMAND ----------
 
--- MAGIC %md
--- MAGIC 
--- MAGIC 
--- MAGIC 
--- MAGIC ## Using Merge to Upsert Records
--- MAGIC 
--- MAGIC Your friend gives you some new beans. The cell below registers these as a temporary view.
 
--- COMMAND ----------
+
+
+## Using Merge to Upsert Records
+
+Your friend gives you some new beans. The cell below registers these as a temporary view.
+
 
 CREATE OR REPLACE TEMP VIEW new_beans(name, color, grams, delicious) AS VALUES
 ('black', 'black', 60.5, true),
@@ -257,7 +261,15 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+MERGE INTO beans b
+USING new_beans n
+ON b.name=n.name and b.color=n.color
+WHEN MATCHED 
+  THEN UPDATE SET b.grams=n.grams + b.grams
+WHEN NOT MATCHED and n.delicious = true
+  THEN INSERT *
+
+
 
 -- COMMAND ----------
 
@@ -296,7 +308,7 @@ SELECT * FROM new_beans
 -- COMMAND ----------
 
 -- TODO
-<FILL-IN>
+DROP TABLE beans
 
 -- COMMAND ----------
 
